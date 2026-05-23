@@ -2,6 +2,7 @@ import datetime
 
 from django.db.models import QuerySet
 
+
 from db.models import MovieSession, CinemaHall, Movie
 
 
@@ -16,11 +17,11 @@ def create_movie_session(
         movie=Movie.objects.get(id=movie_id),
     )
 
-def get_movie_sessions(
+def get_movies_sessions(
         session_date: datetime.datetime = None,
-) -> MovieSession | QuerySet:
+) -> QuerySet:
     if session_date:
-        return MovieSession.objects.filter(show_time=session_date)
+        return MovieSession.objects.filter(show_time__date=session_date)
     return MovieSession.objects.all()
 
 def get_movie_session_by_id(movie_session_id: int) -> MovieSession:
@@ -34,12 +35,14 @@ def update_movie_session(
 ) -> None:
     session = MovieSession.objects.get(id=session_id)
 
-    if show_time and movie_id and cinema_hall_id:
-        session.objects.update(
-            show_time=show_time,
-            cinema_hall=CinemaHall.objects.get(id=cinema_hall_id),
-            movie=Movie.objects.get(id=movie_id),
-        )
+    if show_time:
+        session.show_time = show_time
+    if movie_id:
+        session.movie_id = movie_id
+    if cinema_hall_id:
+        session.cinema_hall_id = cinema_hall_id
+
+    session.save()
 
 def delete_movie_session_by_id(session_id: int) -> None:
     MovieSession.objects.filter(id=session_id).delete()

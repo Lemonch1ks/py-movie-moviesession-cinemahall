@@ -21,6 +21,8 @@ class Movie(models.Model):
     actors = models.ManyToManyField(Actor, related_name='movies')
     genres = models.ManyToManyField(Genre, related_name='movie_genres')
 
+    def __str__(self) -> str:
+        return self.title
 
 class CinemaHall(models.Model):
     name = models.CharField(max_length=255)
